@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS sucursales (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    direccion VARCHAR(255) NOT NULL,
+    telefono VARCHAR(50)
+);

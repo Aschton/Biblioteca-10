@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS autores (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    nacionalidad VARCHAR(100) NOT NULL,
+    biografia VARCHAR(2000)
+);
