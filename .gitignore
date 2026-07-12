@@ -1,0 +1,20 @@
+﻿# Maven
+**/target/
+
+# Bases de datos H2 generadas en tiempo de ejecucion
+**/data/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
