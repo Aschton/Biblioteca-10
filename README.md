@@ -6,7 +6,7 @@ Examen Final Transversal (EFT)
 ## Integrantes
 
 - Aschton Medolphe
-- [Darliette Loconpan]
+- Darliette Loconpan
 
 ## Descripción del dominio
 
