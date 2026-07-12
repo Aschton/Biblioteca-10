@@ -1,0 +1,127 @@
+# docker-compose: levanta los 10 microservicios + el Gateway, todos conectados entre si.
+# Docker crea automaticamente una red interna donde cada servicio se alcanza
+# por su NOMBRE (ej: microservicio-libros), no por localhost.
+#
+# Uso:
+#   docker compose up --build     (construir y levantar)
+#   docker compose down           (apagar todo)
+
+services:
+
+  # ---------- Microservicios base (sin dependencias Feign) ----------
+
+  microservicio-libros:
+    build: ./microservicio-libros
+    container_name: microservicio-libros
+    ports:
+      - "8081:8081"
+
+  microservicio-usuarios:
+    build: ./microservicio-usuarios
+    container_name: microservicio-usuarios
+    ports:
+      - "8082:8082"
+
+  microservicio-autores:
+    build: ./microservicio-autores
+    container_name: microservicio-autores
+    ports:
+      - "8084:8084"
+
+  microservicio-categorias:
+    build: ./microservicio-categorias
+    container_name: microservicio-categorias
+    ports:
+      - "8085:8085"
+
+  microservicio-editoriales:
+    build: ./microservicio-editoriales
+    container_name: microservicio-editoriales
+    ports:
+      - "8086:8086"
+
+  microservicio-sucursales:
+    build: ./microservicio-sucursales
+    container_name: microservicio-sucursales
+    ports:
+      - "8087:8087"
+
+  # ---------- Microservicios que consumen a otros via Feign ----------
+
+  microservicio-prestamos:
+    build: ./microservicio-prestamos
+    container_name: microservicio-prestamos
+    ports:
+      - "8083:8083"
+    environment:
+      - LIBROS_URL=http://microservicio-libros:8081
+      - USUARIOS_URL=http://microservicio-usuarios:8082
+    depends_on:
+      - microservicio-libros
+      - microservicio-usuarios
+
+  microservicio-reservas:
+    build: ./microservicio-reservas
+    container_name: microservicio-reservas
+    ports:
+      - "8088:8088"
+    environment:
+      - LIBROS_URL=http://microservicio-libros:8081
+      - USUARIOS_URL=http://microservicio-usuarios:8082
+    depends_on:
+      - microservicio-libros
+      - microservicio-usuarios
+
+  microservicio-multas:
+    build: ./microservicio-multas
+    container_name: microservicio-multas
+    ports:
+      - "8089:8089"
+    environment:
+      - PRESTAMOS_URL=http://microservicio-prestamos:8083
+      - USUARIOS_URL=http://microservicio-usuarios:8082
+    depends_on:
+      - microservicio-prestamos
+      - microservicio-usuarios
+
+  microservicio-resenas:
+    build: ./microservicio-resenas
+    container_name: microservicio-resenas
+    ports:
+      - "8090:8090"
+    environment:
+      - LIBROS_URL=http://microservicio-libros:8081
+      - USUARIOS_URL=http://microservicio-usuarios:8082
+    depends_on:
+      - microservicio-libros
+      - microservicio-usuarios
+
+  # ---------- API Gateway: punto de entrada unico ----------
+
+  microservicio-gateway:
+    build: ./microservicio-gateway
+    container_name: microservicio-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - LIBROS_URI=http://microservicio-libros:8081
+      - USUARIOS_URI=http://microservicio-usuarios:8082
+      - PRESTAMOS_URI=http://microservicio-prestamos:8083
+      - AUTORES_URI=http://microservicio-autores:8084
+      - CATEGORIAS_URI=http://microservicio-categorias:8085
+      - EDITORIALES_URI=http://microservicio-editoriales:8086
+      - SUCURSALES_URI=http://microservicio-sucursales:8087
+      - RESERVAS_URI=http://microservicio-reservas:8088
+      - MULTAS_URI=http://microservicio-multas:8089
+      - RESENAS_URI=http://microservicio-resenas:8090
+    depends_on:
+      - microservicio-libros
+      - microservicio-usuarios
+      - microservicio-prestamos
+      - microservicio-autores
+      - microservicio-categorias
+      - microservicio-editoriales
+      - microservicio-sucursales
+      - microservicio-reservas
+      - microservicio-multas
+      - microservicio-resenas
